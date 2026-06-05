@@ -1,0 +1,169 @@
+SCIENTIFIC JOURNAL PUBLICATION TREND TRACKING SYSTEM
+SOFTWARE REQUIREMENTS AND PROJECT DOCUMENTATION
+
+ACKNOWLEDGEMENT
+
+DEFINITIONS AND ACRONYMS
+
+I. PROJECT INTRODUCTION
+1. Overview
+1.1. Project Information
+1.2. Project Team
+2. Problem Background and Existing Academic Platforms
+2.1. Research Publication Background
+2.2. Existing Academic Platforms
+2.3. Drawbacks of Current Solutions
+3. Academic Motivation and Practical Significance
+3.1. Motivation for the System
+3.2. Practical Value for Researchers, Lecturers, and Students
+3.3. Expected Academic and Educational Impact
+4. Software Product Vision
+4.1. Vision Statement
+4.2. Core Product Philosophy
+4.3. Success Metrics
+4.4. Key Differentiators
+5. Project Scope and Limitations
+5.1. Project Scope
+5.2. Limitations and Exclusions
+5.3. Project Deliverables
+
+II. PROJECT MANAGEMENT PLAN
+1. Scope and Estimation
+2. Project Objectives and Risks
+2.1. Primary Objectives
+2.2. Project Risks
+3. Management Approach
+3.1. Project Process
+3.2. Quality Management
+3.3. Research and Technology Preparation Plan
+4. Technical Deliverables and Responsibilities
+4.1. System Deliverables
+4.2. Documentation Deliverables
+4.3. Quality Deliverables
+4.4. Team Roles
+4.5. Communication Channels
+5. Configuration Management
+5.1. Document Management
+5.2. Source Code Management
+5.3. Tools and Infrastructure
+
+III. SOFTWARE REQUIREMENTS SPECIFICATION
+1. Product Overview
+1.1. Product Perspective
+1.2. Product Goals
+1.3. Product Users
+2. User Requirements
+2.1. Actors
+2.1.1. Researcher
+2.1.2. Lecturer / Student
+2.1.3. System Administrator
+2.2. Use Cases Overview
+3. Functional Requirements
+3.1. Authentication and Authorization Module
+3.2. Research Paper Search Module
+3.3. Research Paper Detail Viewing Module
+3.4. Publication Trend Tracking Module
+3.5. Trending Research Topic Analysis Module
+3.6. Bookmark and Follow Module
+3.7. Notification Module
+3.8. Dashboard and Statistical Reporting Module
+3.9. Academic API Data Synchronization Module
+3.10. User and System Administration Module
+4. Non-Functional Requirements
+4.1. External Interfaces
+4.2. Performance Requirements
+4.3. Security Requirements
+4.4. Availability and Reliability Requirements
+4.5. Usability Requirements
+4.6. Maintainability and Scalability Requirements
+5. Business Rules and Constraints
+5.1. Metadata-Only Processing Constraint
+5.2. Supported Academic Domains Constraint
+5.3. Third-Party API Dependency Constraint
+5.4. Periodic Data Update Constraint
+
+IV. SOFTWARE DESIGN DESCRIPTION
+1. System Architecture
+1.1. Architecture Overview
+1.2. Frontend Architecture
+1.3. Backend Architecture
+1.4. External Academic API Integration Architecture
+2. Database Design
+2.1. Entity Descriptions
+2.1.1. User
+2.1.2. Research Paper
+2.1.3. Journal
+2.1.4. Author
+2.1.5. Keyword
+2.1.6. Research Topic
+2.1.7. Publication Trend
+2.1.8. Bookmark
+2.1.9. Followed Topic / Journal
+2.1.10. Notification
+2.1.11. Dashboard Report
+2.1.12. API Data Source
+2.2. Entity Relationships
+2.3. ERD
+2.4. Table Descriptions
+3. Detailed Design
+3.1. Class Design
+3.2. Diagrams
+3.2.1. Authentication
+3.2.1.1. Class Diagram
+3.2.1.2. Sequence Diagram
+3.2.2. Research Paper Search
+3.2.2.1. Class Diagram
+3.2.2.2. Sequence Diagram
+3.2.3. Publication Trend Tracking
+3.2.3.1. Class Diagram
+3.2.3.2. Sequence Diagram
+3.2.4. Bookmark and Follow
+3.2.4.1. Class Diagram
+3.2.4.2. Sequence Diagram
+3.2.5. Notification Handling
+3.2.5.1. Class Diagram
+3.2.5.2. Sequence Diagram
+3.2.6. Academic API Data Synchronization
+3.2.6.1. Class Diagram
+3.2.6.2. Sequence Diagram
+3.2.7. Dashboard and Statistical Reporting
+3.2.7.1. Class Diagram
+3.2.7.2. Sequence Diagram
+3.3. User Interface Design
+3.3.1. Home Page
+3.3.2. Search Page
+3.3.3. Research Paper Detail Page
+3.3.4. Trend Analysis Dashboard
+3.3.5. Bookmark and Follow Page
+3.3.6. Administration Page
+
+V. SOFTWARE TESTING DOCUMENTATION
+1. Test Strategy and Scope
+2. Test Plan
+2.1. Human Resources
+2.2. Test Environment
+2.3. Test Milestones
+3. Test Cases
+3.1. Authentication Test Cases
+3.2. Research Paper Search Test Cases
+3.3. Trend Tracking Test Cases
+3.4. Bookmark and Follow Test Cases
+3.5. Notification Test Cases
+3.6. API Synchronization Test Cases
+3.7. Admin Function Test Cases
+4. Test Reports
+
+VI. RELEASE PACKAGE AND USER GUIDES
+1. Deliverable Package
+2. Installation Guides
+2.1. System Requirements
+2.1.1. Web Application
+2.2. Installation Instructions
+2.2.1. Backend
+2.2.2. Frontend
+2.2.3. Database
+2.3. External API Configuration
+3. User Manual
+3.1. Researcher Guide
+3.2. Lecturer / Student Guide
+3.3. System Administrator Guide
