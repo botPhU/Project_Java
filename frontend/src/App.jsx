@@ -1,21 +1,31 @@
-import { Header } from "./components/Header";
-import { HeroSection } from "./sections/HeroSection";
-import { OverviewSection } from "./sections/OverviewSection";
-import { ModulesSection } from "./sections/ModulesSection";
-import { WorkflowSection } from "./sections/WorkflowSection";
-import { Footer } from "./components/Footer";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { AppLayout } from "./components/AppLayout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PublicOnlyRoute } from "./components/PublicOnlyRoute";
+import { AdminPage } from "./pages/AdminPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import { LoginPage } from "./pages/LoginPage";
+import { PaperDetailPage } from "./pages/PaperDetailPage";
+import { PaperSearchPage } from "./pages/PaperSearchPage";
 
 export default function App() {
   return (
-    <div className="app-shell">
-      <Header />
-      <main>
-        <HeroSection />
-        <OverviewSection />
-        <ModulesSection />
-        <WorkflowSection />
-      </main>
-      <Footer />
-    </div>
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route element={<PublicOnlyRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/papers" element={<PaperSearchPage />} />
+          <Route path="/papers/:paperId" element={<PaperDetailPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
+        <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+          <Route path="/admin" element={<AdminPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Route>
+    </Routes>
   );
 }

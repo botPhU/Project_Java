@@ -1,15 +1,15 @@
 const overviewCards = [
   {
-    title: "Tim kiem bai bao",
-    description: "Tra cuu theo keyword, tac gia, journal va xem chi tiet metadata."
+    title: "Tìm kiếm bài báo",
+    description: "Tra cứu theo keyword, tác giả, journal và xem chi tiết metadata."
   },
   {
-    title: "Phan tich xu huong",
-    description: "Thong ke theo nam, top keyword, top journal va topic dang tang truong."
+    title: "Phân tích xu hướng",
+    description: "Thống kê theo năm, top keyword, top journal và topic đang tăng trưởng."
   },
   {
-    title: "Theo doi lau dai",
-    description: "Bookmark bai bao, follow topic, follow journal va nhan notification."
+    title: "Theo dõi lâu dài",
+    description: "Bookmark bài báo, follow topic, follow journal và nhận notification."
   }
 ];
 
@@ -17,8 +17,8 @@ export function OverviewSection() {
   return (
     <section className="section" id="tong-quan">
       <div className="section-heading">
-        <p className="eyebrow">Tong quan he thong</p>
-        <h2>Cac gia tri cot loi cua de tai</h2>
+        <p className="eyebrow">Tổng quan hệ thống</p>
+        <h2>Các giá trị cốt lõi của đề tài</h2>
       </div>
       <div className="grid grid-three">
         {overviewCards.map((card) => (
