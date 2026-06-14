@@ -1,73 +1,132 @@
-const sourceRows = [
-  ["OpenAlex", "Hoạt động", "02:00 mỗi ngày"],
-  ["Crossref", "Hoạt động", "02:10 mỗi ngày"],
-  ["Semantic Scholar", "Cần xác thực", "Tạm dừng"]
-];
+import { useEffect, useState } from "react";
+import { fetchAdminOverview } from "../services/adminService";
 
-const recentUsers = [
-  ["admin", "System Administrator", "Đã xác minh"],
-  ["student01", "Lecturer / Student", "Hoạt động"],
-  ["researcher01", "Researcher", "Hoạt động"]
-];
+const adminTabs = ["Tổng quan", "Người dùng", "Nguồn dữ liệu", "Lịch đồng bộ"];
 
 export function AdminPage() {
+  const [activeTab, setActiveTab] = useState("Tổng quan");
+  const [overview, setOverview] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadOverview() {
+      setIsLoading(true);
+      setError("");
+
+      try {
+        const result = await fetchAdminOverview();
+        setOverview(result);
+      } catch (loadError) {
+        setError(loadError.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadOverview();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="mock-screen admin-screen">
+        <div className="state-box">Đang tải không gian quản trị...</div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="mock-screen admin-screen">
+        <div className="state-box error-box">{error}</div>
+      </section>
+    );
+  }
+
+  if (!overview) {
+    return null;
+  }
+
   return (
     <section className="mock-screen admin-screen">
       <div className="admin-sidebar">
-        <h3>System Administrator</h3>
+        <h3>Quản trị hệ thống</h3>
         <div className="admin-nav">
-          <span className="admin-link active">Tổng quan</span>
-          <span className="admin-link">Người dùng</span>
-          <span className="admin-link">Nguồn dữ liệu</span>
-          <span className="admin-link">Lịch đồng bộ</span>
-          <span className="admin-link">Nhật ký lỗi</span>
+          {adminTabs.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              className={activeTab === tab ? "admin-link active" : "admin-link"}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
       </div>
+
       <div className="admin-main">
         <div className="admin-banner">
           <div>
+            <p className="eyebrow">System Administrator</p>
             <h2>Kiểm soát hệ thống, nguồn dữ liệu và tiến trình đồng bộ</h2>
           </div>
-          <button type="button" className="primary-cta compact">Chạy đồng bộ</button>
+          <div className="banner-actions">
+            <span className={overview.sourceMode === "demo" ? "mode-badge demo" : "mode-badge"}>
+              {overview.sourceMode === "demo" ? "Đang dùng dữ liệu demo" : "Đang dùng dữ liệu backend"}
+            </span>
+            <button type="button" className="primary-cta compact">Chạy đồng bộ</button>
+          </div>
         </div>
+
+        <div className="stats-grid admin-stats-grid">
+          {overview.metrics.map((metric) => (
+            <div className="hero-stat" key={metric.label}>
+              <strong>{metric.value}</strong>
+              <span>{metric.label}</span>
+              <small>{metric.note}</small>
+            </div>
+          ))}
+        </div>
+
         <div className="admin-grid">
           <div className="side-card">
             <h3>Nguồn dữ liệu</h3>
-            {sourceRows.map(([name, status, schedule]) => (
-              <div className="source-row" key={name}>
+            {overview.sourceRows.map((item) => (
+              <div className="source-row" key={item.name}>
                 <div>
-                  <strong>{name}</strong>
-                  <p>{schedule}</p>
+                  <strong>{item.name}</strong>
+                  <p>{item.schedule}</p>
                 </div>
-                <span className="status-pill">{status}</span>
+                <span className="status-pill">{item.status}</span>
               </div>
             ))}
           </div>
-          <div className="side-card">
-            <h3>Thống kê hệ thống</h3>
-            <div className="leader-row"><span>User đang hoạt động</span><strong>128</strong></div>
-            <div className="leader-row"><span>Job thành công 7 ngày</span><strong>14/15</strong></div>
-            <div className="leader-row"><span>Metadata mới</span><strong>3,804</strong></div>
-          </div>
+
           <div className="side-card">
             <h3>Tài khoản gần đây</h3>
-            {recentUsers.map(([username, role, status]) => (
-              <div className="source-row" key={username}>
+            {overview.recentUsers.map((item) => (
+              <div className="source-row" key={item.username}>
                 <div>
-                  <strong>{username}</strong>
-                  <p>{role}</p>
+                  <strong>{item.username}</strong>
+                  <p>{item.role}</p>
                 </div>
-                <span className="status-pill alt">{status}</span>
+                <span className="status-pill alt">{item.status}</span>
               </div>
             ))}
           </div>
+
           <div className="side-card wide">
-            <h3>Hàng đợi xử lý</h3>
+            <div className="card-head">
+              <h3>Hàng đợi xử lý</h3>
+              <span>{activeTab}</span>
+            </div>
             <ul className="simple-list">
-              <li>02:00 - Daily metadata sync - Đang lên lịch</li>
-              <li>02:20 - Trend aggregate rebuild - Đang lên lịch</li>
-              <li>08:00 - Notification digest - Đang lên lịch</li>
-              <li>Manual sync - Sẵn sàng cho admin kích hoạt</li>
+              {overview.syncQueue.map((item) => (
+                <li key={`${item.time}-${item.job}`}>
+                  {item.time} - {item.job} - {item.status}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
