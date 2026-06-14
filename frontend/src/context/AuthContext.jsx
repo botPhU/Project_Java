@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 
 const STORAGE_KEY = "sj_tracker_auth";
 
@@ -14,11 +14,7 @@ function readStoredSession() {
 }
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(null);
-
-  useEffect(() => {
-    setSession(readStoredSession());
-  }, []);
+  const [session, setSession] = useState(readStoredSession);
 
   function signIn(user) {
     setSession(user);
@@ -51,11 +47,11 @@ export function useAuth() {
 export function getRoleLabel(role) {
   switch (role) {
     case "RESEARCHER":
-      return "Researcher";
+      return "Nhà nghiên cứu";
     case "LECTURER_STUDENT":
-      return "Lecturer / Student";
+      return "Giảng viên / Sinh viên";
     case "ADMIN":
-      return "System Administrator";
+      return "Quản trị hệ thống";
     default:
       return role ?? "";
   }
