@@ -1,3 +1,5 @@
+import { AUTH_STORAGE_KEY } from "../context/AuthContext";
+
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 export class ApiError extends Error {
@@ -12,6 +14,27 @@ export class ApiError extends Error {
 
 async function parsePayload(response) {
   return response.json().catch(() => null);
+}
+
+function readStoredSession() {
+  try {
+    const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function buildAuthHeaders() {
+  const session = readStoredSession();
+
+  if (session?.authMode !== "backend" || !session?.basicAuthToken) {
+    return {};
+  }
+
+  return {
+    Authorization: `Basic ${session.basicAuthToken}`
+  };
 }
 
 export async function apiRequest(path, options = {}) {
@@ -29,6 +52,7 @@ export async function apiRequest(path, options = {}) {
       method,
       headers: {
         Accept: "application/json",
+        ...buildAuthHeaders(),
         ...headers
       },
       body

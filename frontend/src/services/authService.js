@@ -20,8 +20,13 @@ function normalizeUser(user, authMode = "backend") {
     username: user.username,
     fullName: user.fullName ?? user.username,
     role: user.role,
-    authMode
+    authMode,
+    basicAuthToken: user.basicAuthToken ?? null
   };
+}
+
+function createBasicAuthToken(username, password) {
+  return window.btoa(`${username}:${password}`);
 }
 
 export function getDemoAccounts() {
@@ -43,7 +48,14 @@ export async function login(credentials) {
     const payload = await apiPost("/api/v1/auth/login", trimmedCredentials, {
       defaultErrorMessage: "Đăng nhập không thành công."
     });
-    return normalizeUser(payload.data ?? payload, "backend");
+
+    return normalizeUser(
+      {
+        ...(payload.data ?? payload),
+        basicAuthToken: createBasicAuthToken(trimmedCredentials.username, trimmedCredentials.password)
+      },
+      "backend"
+    );
   } catch (error) {
     if (shouldUseDemoFallback(error)) {
       const matchedUser = demoUsers.find((user) => (

@@ -1,12 +1,14 @@
 package com.swp.scijournal.common.config;
 
 import com.swp.scijournal.auth.service.DatabaseUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,8 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @EnableWebSecurity
 @Configuration
@@ -66,7 +66,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/papers/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults())
+            .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint((request, response, authException) -> {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.getWriter().write(
+                    "{\"success\":false,\"message\":\"Yêu cầu đăng nhập trước khi truy cập API này.\",\"data\":null}"
+                );
+            }))
             .authenticationProvider(authenticationProvider);
 
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));

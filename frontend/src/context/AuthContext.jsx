@@ -1,12 +1,12 @@
 import { createContext, useContext, useMemo, useState } from "react";
 
-const STORAGE_KEY = "sj_tracker_auth";
+export const AUTH_STORAGE_KEY = "sj_tracker_auth";
 
 const AuthContext = createContext(null);
 
 function readStoredSession() {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
@@ -18,12 +18,12 @@ export function AuthProvider({ children }) {
 
   function signIn(user) {
     setSession(user);
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
   }
 
   function signOut() {
     setSession(null);
-    window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
   }
 
   const value = useMemo(() => ({
