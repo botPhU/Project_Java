@@ -1,3 +1,5 @@
+import { apiPost, shouldUseDemoFallback } from "./apiClient";
+
 const SAVED_PAPER_KEY = "sj_tracker_saved_papers";
 const FOLLOWED_KEYWORDS_KEY = "sj_tracker_followed_keywords";
 
@@ -22,15 +24,37 @@ export function isPaperSaved(paperId) {
   return getSavedPaperIds().includes(String(paperId));
 }
 
-export function toggleSavedPaper(paperId) {
+function setPaperSavedState(paperId, nextSavedState) {
   const savedIds = getSavedPaperIds();
   const normalizedId = String(paperId);
-  const nextValue = savedIds.includes(normalizedId)
-    ? savedIds.filter((item) => item !== normalizedId)
-    : [...savedIds, normalizedId];
+  const nextValue = nextSavedState
+    ? (savedIds.includes(normalizedId) ? savedIds : [...savedIds, normalizedId])
+    : savedIds.filter((item) => item !== normalizedId);
 
   writeJson(SAVED_PAPER_KEY, nextValue);
-  return nextValue.includes(normalizedId);
+  return nextSavedState;
+}
+
+export async function toggleSavedPaper(paperId, nextSavedState = null) {
+  const currentSavedState = isPaperSaved(paperId);
+  const targetSavedState = nextSavedState ?? !currentSavedState;
+
+  if (!targetSavedState) {
+    return setPaperSavedState(paperId, false);
+  }
+
+  try {
+    await apiPost(`/api/v1/bookmarks/papers/${paperId}`, null, {
+      headers: {},
+      defaultErrorMessage: "Không thể lưu bookmark bài báo."
+    });
+    return setPaperSavedState(paperId, true);
+  } catch (error) {
+    if (!shouldUseDemoFallback(error)) {
+      throw error;
+    }
+    return setPaperSavedState(paperId, true);
+  }
 }
 
 export function getFollowedKeywords() {

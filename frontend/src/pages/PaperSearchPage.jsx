@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { fetchPapers } from "../services/paperService";
 import { getSavedPaperIds, isPaperSaved, toggleSavedPaper } from "../services/libraryService";
 
-const quickKeywords = ["machine learning", "deep learning", "computer vision", "large language model"];
+const quickKeywords = ["machine learning", "deep learning", "computer vision", "AI Research Trends"];
 const availableSources = ["", "OpenAlex", "Crossref", "Semantic Scholar"];
 
 const initialFilters = {
@@ -72,42 +72,46 @@ export function PaperSearchPage() {
     loadPapers(nextFilters);
   }
 
-  function handleToggleSave(paperId) {
-    const isSaved = toggleSavedPaper(paperId);
-    setSavedPaperIds((currentState) => {
-      const normalizedId = String(paperId);
-      if (isSaved) {
-        return currentState.includes(normalizedId) ? currentState : [...currentState, normalizedId];
-      }
-      return currentState.filter((item) => item !== normalizedId);
-    });
+  async function handleToggleSave(paperId) {
+    try {
+      const isSaved = await toggleSavedPaper(paperId);
+      setSavedPaperIds((currentState) => {
+        const normalizedId = String(paperId);
+        if (isSaved) {
+          return currentState.includes(normalizedId) ? currentState : [...currentState, normalizedId];
+        }
+        return currentState.filter((item) => item !== normalizedId);
+      });
+    } catch (toggleError) {
+      setError(toggleError.message);
+    }
   }
 
   return (
     <section className="mock-screen search-screen">
       <div className="toolbar">
         <div>
-          <p className="eyebrow">Tìm kiếm bài báo</p>
-          <h2>Tra cứu bài báo theo keyword, tác giả và journal</h2>
+          <p className="eyebrow">Tim kiem bai bao</p>
+          <h2>Tra cuu bai bao theo keyword, tac gia va journal</h2>
         </div>
         <div className="toolbar-actions">
-          <button type="button" className="ghost-cta compact-ghost" onClick={handleReset}>Xóa bộ lọc</button>
-          <button type="submit" form="paper-filter-form" className="primary-cta compact">Lọc dữ liệu</button>
+          <button type="button" className="ghost-cta compact-ghost" onClick={handleReset}>Xoa bo loc</button>
+          <button type="submit" form="paper-filter-form" className="primary-cta compact">Loc du lieu</button>
         </div>
       </div>
 
       <div className="insight-strip">
         <div className="mini-stat">
           <strong>{papers.length}</strong>
-          <span>Kết quả hiện tại</span>
+          <span>Ket qua hien tai</span>
         </div>
         <div className="mini-stat">
           <strong>{String(sourceCount).padStart(2, "0")}</strong>
-          <span>Nguồn học thuật</span>
+          <span>Nguon hoc thuat</span>
         </div>
         <div className="mini-stat">
           <strong>{sourceMode === "demo" ? "Demo" : "Live"}</strong>
-          <span>Chế độ dữ liệu</span>
+          <span>Che do du lieu</span>
         </div>
       </div>
 
@@ -115,41 +119,41 @@ export function PaperSearchPage() {
         <form id="paper-filter-form" className="filter-panel" onSubmit={handleSubmit}>
           <div className="panel-section-head">
             <div>
-              <h3>Bộ lọc</h3>
-              <p>Tối ưu cho việc demo nhanh và nối API thật sau này.</p>
+              <h3>Bo loc</h3>
+              <p>Tim theo paper, tac gia, journal va nguon du lieu.</p>
             </div>
             <span className={sourceMode === "demo" ? "mode-badge demo" : "mode-badge"}>
-              {sourceMode === "demo" ? "Dữ liệu demo" : "Dữ liệu backend"}
+              {sourceMode === "demo" ? "Du lieu demo" : "Du lieu backend"}
             </span>
           </div>
 
           <div className="filter-grid">
             <label className="field">
-              <span>Keyword</span>
-              <input name="keyword" value={filters.keyword} onChange={handleChange} placeholder="Ví dụ: machine learning" />
+              <span>Keyword / Topic</span>
+              <input name="keyword" value={filters.keyword} onChange={handleChange} placeholder="Vi du: machine learning" />
             </label>
 
             <label className="field">
-              <span>Tác giả</span>
-              <input name="author" value={filters.author} onChange={handleChange} placeholder="Ví dụ: Andrew Ng" />
+              <span>Tac gia</span>
+              <input name="author" value={filters.author} onChange={handleChange} placeholder="Vi du: Andrew Ng" />
             </label>
 
             <label className="field">
               <span>Journal</span>
-              <input name="journal" value={filters.journal} onChange={handleChange} placeholder="Ví dụ: IEEE Access" />
+              <input name="journal" value={filters.journal} onChange={handleChange} placeholder="Vi du: IEEE Access" />
             </label>
 
             <label className="field">
-              <span>Năm công bố</span>
-              <input name="year" value={filters.year} onChange={handleChange} placeholder="Ví dụ: 2025" />
+              <span>Nam cong bo</span>
+              <input name="year" value={filters.year} onChange={handleChange} placeholder="Vi du: 2025" />
             </label>
 
             <label className="field field-full">
-              <span>Nguồn dữ liệu</span>
+              <span>Nguon du lieu</span>
               <select name="source" value={filters.source} onChange={handleChange}>
                 {availableSources.map((source) => (
                   <option key={source || "all"} value={source}>
-                    {source || "Tất cả nguồn"}
+                    {source || "Tat ca nguon"}
                   </option>
                 ))}
               </select>
@@ -157,7 +161,7 @@ export function PaperSearchPage() {
           </div>
 
           <div className="filter-helper">
-            <span>Từ khóa gợi ý</span>
+            <span>Tu khoa goi y</span>
           </div>
 
           <div className="quick-chip-row">
@@ -173,20 +177,20 @@ export function PaperSearchPage() {
             ))}
           </div>
 
-          <button type="submit" className="primary-cta">Áp dụng bộ lọc</button>
+          <button type="submit" className="primary-cta">Ap dung bo loc</button>
         </form>
 
         <div className="results-panel">
           <div className="results-head">
-            <strong>{isLoading ? "Đang tải..." : `${papers.length} kết quả tìm thấy`}</strong>
-            <span>{sourceMode === "demo" ? "Đang dùng dữ liệu demo" : "Dữ liệu thật từ backend"}</span>
+            <strong>{isLoading ? "Dang tai..." : `${papers.length} ket qua tim thay`}</strong>
+            <span>{sourceMode === "demo" ? "Dang dung du lieu demo" : "Du lieu that tu backend"}</span>
           </div>
 
           {error ? <div className="state-box error-box">{error}</div> : null}
-          {!error && isLoading ? <div className="state-box">Đang tải danh sách bài báo...</div> : null}
+          {!error && isLoading ? <div className="state-box">Dang tai danh sach bai bao...</div> : null}
           {!error && !isLoading && papers.length === 0 ? (
             <div className="state-box">
-              Không tìm thấy bài báo phù hợp. Hãy thử đổi keyword hoặc bỏ bớt điều kiện lọc.
+              Khong tim thay bai bao phu hop. Hay thu doi keyword hoac bo bot dieu kien loc.
             </div>
           ) : null}
 
@@ -210,15 +214,21 @@ export function PaperSearchPage() {
                       ))}
                     </div>
 
+                    {paper.topics.length > 0 ? (
+                      <div className="paper-footnote">
+                        <span>Topic: {paper.topics.join(", ")}</span>
+                      </div>
+                    ) : null}
+
                     <div className="paper-footnote">
-                      <span>Nguồn: {paper.sourceName}</span>
-                      <span>Trích dẫn: {paper.citationCount}</span>
+                      <span>Nguon: {paper.sourceName}</span>
+                      <span>Trich dan: {paper.citationCount}</span>
                     </div>
 
                     <div className="paper-actions">
-                      <Link to={`/papers/${paper.id}`} className="text-link">Xem chi tiết</Link>
+                      <Link to={`/papers/${paper.id}`} className="text-link">Xem chi tiet</Link>
                       <button type="button" className="card-action" onClick={() => handleToggleSave(paper.id)}>
-                        {saved ? "Đã lưu" : "Lưu"}
+                        {saved ? "Da luu" : "Luu"}
                       </button>
                     </div>
                   </article>

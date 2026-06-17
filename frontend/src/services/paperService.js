@@ -6,15 +6,18 @@ function normalizePaper(paper) {
     id: paper.id,
     title: paper.title,
     authors: paper.authors ?? [],
-    journal: paper.journal ?? "Chưa rõ journal",
+    journal: paper.journal ?? "Chua ro journal",
     publicationYear: paper.publicationYear ?? "N/A",
     keywords: paper.keywords ?? [],
-    sourceName: paper.sourceName ?? "Nội bộ",
+    topics: paper.topics ?? [],
+    sourceName: paper.sourceName ?? "Noi bo",
     sourcePaperId: paper.sourcePaperId ?? "N/A",
-    abstractText: paper.abstractText ?? "Chưa có tóm tắt.",
+    abstractText: paper.abstractText ?? "Chua co tom tat.",
     citationCount: paper.citationCount ?? 0,
-    doi: paper.doi ?? "Chưa có DOI",
+    doi: paper.doi ?? "Chua co DOI",
     url: paper.url ?? "#",
+    documentType: paper.documentType ?? "N/A",
+    language: paper.language ?? "N/A",
     trendScore: paper.trendScore ?? 0,
     monthlyGrowth: paper.monthlyGrowth ?? "+0%"
   };
@@ -28,7 +31,10 @@ function filterPapers(items, filters = {}) {
     const year = filters.year?.trim() ?? "";
     const source = filters.source?.trim().toLowerCase() ?? "";
 
-    const inKeyword = !keyword || paper.title.toLowerCase().includes(keyword) || paper.keywords.some((item) => item.toLowerCase().includes(keyword));
+    const inKeyword = !keyword
+      || paper.title.toLowerCase().includes(keyword)
+      || paper.keywords.some((item) => item.toLowerCase().includes(keyword))
+      || paper.topics.some((item) => item.toLowerCase().includes(keyword));
     const inAuthor = !author || paper.authors.some((item) => item.toLowerCase().includes(author));
     const inJournal = !journal || paper.journal.toLowerCase().includes(journal);
     const inYear = !year || String(paper.publicationYear) === year;
@@ -53,9 +59,6 @@ function buildSearchQuery(filters) {
   if (filters.year?.trim()) {
     params.set("year", filters.year.trim());
   }
-  if (filters.source?.trim()) {
-    params.set("source", filters.source.trim());
-  }
 
   const queryString = params.toString();
   return queryString ? `?${queryString}` : "";
@@ -74,7 +77,10 @@ export async function fetchPapers(filters = {}) {
   try {
     const payload = await apiGet(`/api/v1/papers${buildSearchQuery(filters)}`);
     const backendItems = (payload.data ?? []).map(normalizePaper);
-    return toSearchResult(backendItems, "backend");
+    const filteredItems = filters.source?.trim()
+      ? backendItems.filter((item) => item.sourceName.toLowerCase().includes(filters.source.trim().toLowerCase()))
+      : backendItems;
+    return toSearchResult(filteredItems, "backend");
   } catch (error) {
     if (!shouldUseDemoFallback(error)) {
       throw error;
