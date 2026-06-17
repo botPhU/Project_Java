@@ -9,6 +9,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -24,6 +25,23 @@ public class ResearchPaper extends BaseEntity {
 
     @Column(nullable = false)
     private Integer publicationYear;
+
+    @Column(length = 255, unique = true)
+    private String doi;
+
+    private LocalDate publicationDate;
+
+    @Column(length = 100)
+    private String documentType;
+
+    @Column(length = 50)
+    private String language;
+
+    @Column(length = 500)
+    private String url;
+
+    @Column(nullable = false)
+    private Integer citationCount = 0;
 
     @Column(length = 100)
     private String sourceName;
@@ -51,6 +69,14 @@ public class ResearchPaper extends BaseEntity {
     )
     private Set<Keyword> keywords = new LinkedHashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+        name = "paper_topics",
+        joinColumns = @JoinColumn(name = "paper_id"),
+        inverseJoinColumns = @JoinColumn(name = "topic_id")
+    )
+    private Set<ResearchTopic> topics = new LinkedHashSet<>();
+
     public String getTitle() {
         return title;
     }
@@ -73,6 +99,54 @@ public class ResearchPaper extends BaseEntity {
 
     public void setPublicationYear(Integer publicationYear) {
         this.publicationYear = publicationYear;
+    }
+
+    public String getDoi() {
+        return doi;
+    }
+
+    public void setDoi(String doi) {
+        this.doi = doi;
+    }
+
+    public LocalDate getPublicationDate() {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(LocalDate publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Integer getCitationCount() {
+        return citationCount;
+    }
+
+    public void setCitationCount(Integer citationCount) {
+        this.citationCount = citationCount;
     }
 
     public String getSourceName() {
@@ -113,5 +187,13 @@ public class ResearchPaper extends BaseEntity {
 
     public void setKeywords(Set<Keyword> keywords) {
         this.keywords = keywords;
+    }
+
+    public Set<ResearchTopic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(Set<ResearchTopic> topics) {
+        this.topics = topics;
     }
 }

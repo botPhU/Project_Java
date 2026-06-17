@@ -35,11 +35,15 @@ public class PaperService {
             paper.getTitle(),
             paper.getAbstractText(),
             paper.getPublicationYear(),
+            paper.getDoi(),
+            paper.getCitationCount(),
             paper.getJournal().getName(),
+            paper.getUrl(),
             paper.getSourceName(),
             paper.getSourcePaperId(),
             paper.getAuthors().stream().map(author -> author.getName()).sorted().toList(),
-            paper.getKeywords().stream().map(keyword -> keyword.getName()).sorted().toList()
+            paper.getKeywords().stream().map(keyword -> keyword.getName()).sorted().toList(),
+            paper.getTopics().stream().map(topic -> topic.getName()).sorted().toList()
         );
     }
 
@@ -48,6 +52,7 @@ public class PaperService {
             paper.getId(),
             paper.getTitle(),
             paper.getPublicationYear(),
+            paper.getCitationCount(),
             paper.getJournal().getName(),
             paper.getAuthors().stream()
                 .map(author -> author.getName())

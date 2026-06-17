@@ -26,6 +26,9 @@ public class Notification extends BaseEntity {
     @Column(nullable = false)
     private boolean read;
 
+    @Column(length = 50)
+    private String type;
+
     public User getUser() {
         return user;
     }
@@ -56,5 +59,13 @@ public class Notification extends BaseEntity {
 
     public void setRead(boolean read) {
         this.read = read;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

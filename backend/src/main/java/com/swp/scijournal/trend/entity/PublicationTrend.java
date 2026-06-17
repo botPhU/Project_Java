@@ -21,6 +21,9 @@ public class PublicationTrend extends BaseEntity {
     @Column(nullable = false)
     private Integer publicationCount;
 
+    @Column(nullable = false)
+    private Integer citationCount = 0;
+
     public String getTargetName() {
         return targetName;
     }
@@ -51,5 +54,13 @@ public class PublicationTrend extends BaseEntity {
 
     public void setPublicationCount(Integer publicationCount) {
         this.publicationCount = publicationCount;
+    }
+
+    public Integer getCitationCount() {
+        return citationCount;
+    }
+
+    public void setCitationCount(Integer citationCount) {
+        this.citationCount = citationCount;
     }
 }

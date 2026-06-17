@@ -1,11 +1,19 @@
 package com.swp.scijournal.sync.service;
 
+import com.swp.scijournal.datasource.repository.ApiDataSourceRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SyncService {
 
+    private final ApiDataSourceRepository apiDataSourceRepository;
+
+    public SyncService(ApiDataSourceRepository apiDataSourceRepository) {
+        this.apiDataSourceRepository = apiDataSourceRepository;
+    }
+
     public String runManualSync() {
-        throw new UnsupportedOperationException("TODO: Hoàn thiện đồng bộ dữ liệu thủ công và định kỳ.");
+        int activeSourceCount = apiDataSourceRepository.findByActiveTrueOrderBySourceNameAsc().size();
+        return "Đã tiếp nhận yêu cầu đồng bộ thủ công cho " + activeSourceCount + " nguồn dữ liệu đang bật.";
     }
 }

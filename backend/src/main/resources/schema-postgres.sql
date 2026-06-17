@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(150) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
+    institution VARCHAR(255),
+    research_interests VARCHAR(1000),
     role_id BIGINT NOT NULL REFERENCES roles(id)
 );
 
@@ -22,21 +24,41 @@ CREATE TABLE IF NOT EXISTS journals (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     name VARCHAR(200) NOT NULL UNIQUE,
-    issn VARCHAR(50)
+    issn VARCHAR(50),
+    publisher VARCHAR(255),
+    impact_factor NUMERIC(6,2),
+    subject_area VARCHAR(255),
+    country VARCHAR(100),
+    website_url VARCHAR(500)
 );
 
 CREATE TABLE IF NOT EXISTS authors (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    name VARCHAR(150) NOT NULL UNIQUE
+    name VARCHAR(150) NOT NULL UNIQUE,
+    affiliation VARCHAR(255),
+    country VARCHAR(100),
+    external_author_id VARCHAR(255),
+    h_index INTEGER,
+    total_citations INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS keywords (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    name VARCHAR(120) NOT NULL UNIQUE
+    name VARCHAR(120) NOT NULL UNIQUE,
+    normalized_name VARCHAR(120) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS research_topics (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    name VARCHAR(150) NOT NULL UNIQUE,
+    description VARCHAR(1000),
+    domain VARCHAR(150)
 );
 
 CREATE TABLE IF NOT EXISTS research_papers (
@@ -46,6 +68,12 @@ CREATE TABLE IF NOT EXISTS research_papers (
     title VARCHAR(300) NOT NULL,
     abstract_text VARCHAR(4000) NOT NULL,
     publication_year INTEGER NOT NULL,
+    doi VARCHAR(255) UNIQUE,
+    publication_date DATE,
+    document_type VARCHAR(100),
+    language VARCHAR(50),
+    url VARCHAR(500),
+    citation_count INTEGER NOT NULL DEFAULT 0,
     source_name VARCHAR(100),
     source_paper_id VARCHAR(200),
     journal_id BIGINT NOT NULL REFERENCES journals(id),
@@ -62,6 +90,12 @@ CREATE TABLE IF NOT EXISTS paper_keywords (
     paper_id BIGINT NOT NULL REFERENCES research_papers(id) ON DELETE CASCADE,
     keyword_id BIGINT NOT NULL REFERENCES keywords(id) ON DELETE CASCADE,
     PRIMARY KEY (paper_id, keyword_id)
+);
+
+CREATE TABLE IF NOT EXISTS paper_topics (
+    paper_id BIGINT NOT NULL REFERENCES research_papers(id) ON DELETE CASCADE,
+    topic_id BIGINT NOT NULL REFERENCES research_topics(id) ON DELETE CASCADE,
+    PRIMARY KEY (paper_id, topic_id)
 );
 
 CREATE TABLE IF NOT EXISTS bookmarks (
@@ -90,6 +124,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title VARCHAR(200) NOT NULL,
     content VARCHAR(1000) NOT NULL,
+    type VARCHAR(50),
     read BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -101,6 +136,7 @@ CREATE TABLE IF NOT EXISTS publication_trends (
     target_type VARCHAR(50) NOT NULL,
     period_year INTEGER NOT NULL,
     publication_count INTEGER NOT NULL,
+    citation_count INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT uk_publication_trends_target_year UNIQUE (target_name, target_type, period_year)
 );
 
@@ -110,12 +146,15 @@ CREATE TABLE IF NOT EXISTS api_data_sources (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     source_name VARCHAR(100) NOT NULL UNIQUE,
     base_url VARCHAR(500),
-    active BOOLEAN NOT NULL DEFAULT TRUE
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    rate_limit_per_minute INTEGER,
+    last_sync_at TIMESTAMP WITH TIME ZONE
 );
 
 CREATE INDEX IF NOT EXISTS idx_users_role_id ON users(role_id);
 CREATE INDEX IF NOT EXISTS idx_papers_journal_id ON research_papers(journal_id);
 CREATE INDEX IF NOT EXISTS idx_papers_publication_year ON research_papers(publication_year);
+CREATE INDEX IF NOT EXISTS idx_papers_doi ON research_papers(doi);
 CREATE INDEX IF NOT EXISTS idx_bookmarks_user_id ON bookmarks(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_trends_target_year ON publication_trends(target_type, target_name, period_year);

@@ -1,6 +1,7 @@
 package com.swp.scijournal.notification.controller;
 
 import com.swp.scijournal.common.web.ApiResponse;
+import com.swp.scijournal.notification.dto.NotificationResponse;
 import com.swp.scijournal.notification.service.NotificationService;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ApiResponse<List<?>> list() {
+    public ApiResponse<List<NotificationResponse>> list() {
         return ApiResponse.ok("Lấy danh sách thông báo thành công.", notificationService.getNotifications());
     }
 }
