@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { fetchAdminOverview, runManualSync } from "../services/adminService";
 
-const adminTabs = ["Tong quan", "Nguoi dung", "Nguon du lieu", "Lich dong bo"];
+const adminTabs = ["Tổng quan", "Người dùng", "Nguồn dữ liệu", "Lịch đồng bộ"];
 
 export function AdminPage() {
-  const [activeTab, setActiveTab] = useState("Tong quan");
+  const [activeTab, setActiveTab] = useState("Tổng quan");
   const [overview, setOverview] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -36,7 +36,7 @@ export function AdminPage() {
 
     try {
       const result = await runManualSync();
-      setFeedback(result.message ?? "Da gui yeu cau dong bo.");
+      setFeedback(result.message ?? "Đã gửi yêu cầu đồng bộ.");
     } catch (syncError) {
       setError(syncError.message);
     } finally {
@@ -47,7 +47,7 @@ export function AdminPage() {
   if (isLoading) {
     return (
       <section className="mock-screen admin-screen">
-        <div className="state-box">Dang tai khong gian quan tri...</div>
+        <div className="state-box">Đang tải không gian quản trị...</div>
       </section>
     );
   }
@@ -67,7 +67,7 @@ export function AdminPage() {
   return (
     <section className="mock-screen admin-screen">
       <div className="admin-sidebar">
-        <h3>Quan tri he thong</h3>
+        <h3>Quản trị hệ thống</h3>
         <div className="admin-nav">
           {adminTabs.map((tab) => (
             <button
@@ -86,14 +86,14 @@ export function AdminPage() {
         <div className="admin-banner">
           <div>
             <p className="eyebrow">System Administrator</p>
-            <h2>Kiem soat he thong, nguon du lieu va tien trinh dong bo</h2>
+            <h2>Kiểm soát hệ thống, nguồn dữ liệu và tiến trình đồng bộ</h2>
           </div>
           <div className="banner-actions">
             <span className={overview.sourceMode === "demo" ? "mode-badge demo" : "mode-badge"}>
-              {overview.sourceMode === "demo" ? "Dang dung du lieu demo" : "Dang dung du lieu backend"}
+              {overview.sourceMode === "demo" ? "Đang dùng dữ liệu demo" : "Đang dùng dữ liệu backend"}
             </span>
             <button type="button" className="primary-cta compact" onClick={handleRunSync} disabled={isSyncing}>
-              {isSyncing ? "Dang gui..." : "Chay dong bo"}
+              {isSyncing ? "Đang gửi..." : "Chạy đồng bộ"}
             </button>
           </div>
         </div>
@@ -113,7 +113,7 @@ export function AdminPage() {
 
         <div className="admin-grid">
           <div className="side-card">
-            <h3>Nguon du lieu</h3>
+            <h3>Nguồn dữ liệu</h3>
             {overview.sourceRows.map((item) => (
               <div className="source-row" key={item.name}>
                 <div>
@@ -126,7 +126,7 @@ export function AdminPage() {
           </div>
 
           <div className="side-card">
-            <h3>Tai khoan gan day</h3>
+            <h3>Tài khoản gần đây</h3>
             {overview.recentUsers.map((item) => (
               <div className="source-row" key={item.username}>
                 <div>
@@ -140,7 +140,7 @@ export function AdminPage() {
 
           <div className="side-card wide">
             <div className="card-head">
-              <h3>Hang doi xu ly</h3>
+              <h3>Hàng đợi xử lý</h3>
               <span>{activeTab}</span>
             </div>
             <ul className="simple-list">
