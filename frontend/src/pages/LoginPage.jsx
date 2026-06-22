@@ -16,7 +16,7 @@ export function LoginPage() {
   const location = useLocation();
   const { signIn } = useAuth();
   const [credentials, setCredentials] = useState({
-    username: "student01",
+    username: "admin",
     password: "123456"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
