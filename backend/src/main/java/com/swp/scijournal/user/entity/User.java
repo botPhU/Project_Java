@@ -28,6 +28,12 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(length = 255)
+    private String institution;
+
+    @Column(length = 1000)
+    private String researchInterests;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
@@ -70,6 +76,22 @@ public class User extends BaseEntity {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
+    public String getResearchInterests() {
+        return researchInterests;
+    }
+
+    public void setResearchInterests(String researchInterests) {
+        this.researchInterests = researchInterests;
     }
 
     public Role getRole() {

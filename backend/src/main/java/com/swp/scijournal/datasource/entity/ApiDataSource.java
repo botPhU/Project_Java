@@ -4,6 +4,7 @@ import com.swp.scijournal.common.model.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.time.Instant;
 
 @Entity
 @Table(name = "api_data_sources")
@@ -17,6 +18,10 @@ public class ApiDataSource extends BaseEntity {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    private Integer rateLimitPerMinute;
+
+    private Instant lastSyncAt;
 
     public String getSourceName() {
         return sourceName;
@@ -40,5 +45,21 @@ public class ApiDataSource extends BaseEntity {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Integer getRateLimitPerMinute() {
+        return rateLimitPerMinute;
+    }
+
+    public void setRateLimitPerMinute(Integer rateLimitPerMinute) {
+        this.rateLimitPerMinute = rateLimitPerMinute;
+    }
+
+    public Instant getLastSyncAt() {
+        return lastSyncAt;
+    }
+
+    public void setLastSyncAt(Instant lastSyncAt) {
+        this.lastSyncAt = lastSyncAt;
     }
 }

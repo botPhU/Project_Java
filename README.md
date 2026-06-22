@@ -29,6 +29,7 @@ project_Java
 |   |-- vite.config.js
 |   `-- src
 |-- ARCHITECTURE.md
+|-- docker-compose.yml
 `-- README.md
 ```
 
@@ -41,7 +42,8 @@ project_Java
 - Spring Web
 - Spring Security
 - Spring Data JPA
-- PostgreSQL
+- H2 cho demo nhanh
+- PostgreSQL cho database thực tế
 
 ### Frontend
 
@@ -83,6 +85,55 @@ Nếu dùng IDE như IntelliJ IDEA hoặc VS Code, có thể chạy class:
 
 - `com.swp.scijournal.ScientificJournalApplication`
 
+### 5.1.1. Chạy backend với PostgreSQL
+
+Repo đã có sẵn profile PostgreSQL:
+
+- `backend/src/main/resources/application-postgres.yml`
+- `backend/src/main/resources/schema-postgres.sql`
+- `backend/src/main/resources/data-postgres.sql`
+
+Chạy database bằng Docker:
+
+```powershell
+docker compose up -d
+```
+
+Database mặc định:
+
+- `host`: `localhost`
+- `port`: `5432`
+- `database`: `scientific_journal`
+- `username`: `postgres`
+- `password`: `postgres`
+
+Chạy backend với profile postgres:
+
+```powershell
+cd backend
+mvn spring-boot:run "-Dspring-boot.run.profiles=postgres"
+```
+
+Hoặc set biến môi trường nếu muốn đổi kết nối:
+
+```powershell
+$env:DB_URL="jdbc:postgresql://localhost:5432/scientific_journal"
+$env:DB_USERNAME="postgres"
+$env:DB_PASSWORD="postgres"
+mvn spring-boot:run "-Dspring-boot.run.profiles=postgres"
+```
+
+Ghi chú:
+
+- Profile `default` vẫn dùng `H2 in-memory` cho việc demo nhanh.
+- Profile `postgres` sẽ dùng schema và seed data trong resources để khởi tạo database.
+- Nếu đã từng chạy profile postgres với schema cũ, nên xóa volume Docker cũ trước khi chạy lại:
+
+```powershell
+docker compose down -v
+docker compose up -d
+```
+
 ### 5.2. Chạy frontend
 
 Đi tới thư mục:
@@ -107,6 +158,7 @@ npm run dev
 
 - Backend: `http://localhost:8080`
 - Frontend: `http://localhost:5173`
+- PostgreSQL: `localhost:5432`
 
 ## 7. Lộ trình triển khai đề xuất
 
@@ -139,5 +191,6 @@ Xem thêm:
 ## 9. Ghi chú
 
 - Bộ khung hiện tại được tối ưu cho mục đích đồ án và phát triển theo nhóm
-- Hiện tại backend mới là skeleton kiến trúc, chưa phải bản hoàn chỉnh nghiệp vụ
+- Backend hiện vẫn là skeleton nghiệp vụ ở một số module, nhưng đã có profile PostgreSQL để chuyển dần sang database thực tế
 - Frontend hiện là khung giao diện ban đầu để nhóm phát triển tiếp các màn hình chính
+- Database PostgreSQL đã được tách thành `schema + seed data` riêng để hỗ trợ triển khai và test ổn định hơn

@@ -35,10 +35,14 @@ export function PaperDetailPage() {
     loadPaperDetail();
   }, [paperId]);
 
-  function handleToggleSave() {
-    const nextSavedState = toggleSavedPaper(paperId);
-    setIsSaved(nextSavedState);
-    setFeedback(nextSavedState ? "Đã lưu bài báo vào thư viện cá nhân." : "Đã bỏ bài báo khỏi thư viện cá nhân.");
+  async function handleToggleSave() {
+    try {
+      const nextSavedState = await toggleSavedPaper(paperId, !isSaved);
+      setIsSaved(nextSavedState);
+      setFeedback(nextSavedState ? "Da luu bai bao vao thu vien ca nhan." : "Da bo bai bao khoi thu vien ca nhan.");
+    } catch (toggleError) {
+      setFeedback(toggleError.message);
+    }
   }
 
   function handleFollowKeyword() {
@@ -48,13 +52,13 @@ export function PaperDetailPage() {
 
     const followedKeywords = followKeyword(paper.keywords[0]);
     const followedKeyword = followedKeywords.at(-1) ?? paper.keywords[0];
-    setFeedback(`Đã theo dõi keyword "${followedKeyword}".`);
+    setFeedback(`Da theo doi keyword "${followedKeyword}".`);
   }
 
   if (isLoading) {
     return (
       <section className="mock-screen detail-screen">
-        <div className="state-box">Đang tải chi tiết bài báo...</div>
+        <div className="state-box">Dang tai chi tiet bai bao...</div>
       </section>
     );
   }
@@ -70,7 +74,7 @@ export function PaperDetailPage() {
   if (!paper) {
     return (
       <section className="mock-screen detail-screen">
-        <div className="state-box">Không có dữ liệu bài báo.</div>
+        <div className="state-box">Khong co du lieu bai bao.</div>
       </section>
     );
   }
@@ -78,13 +82,13 @@ export function PaperDetailPage() {
   return (
     <section className="mock-screen detail-screen">
       <div className="detail-main">
-        <Link to="/papers" className="back-link">← Quay lại danh sách bài báo</Link>
-        <p className="eyebrow">Chi tiết bài báo</p>
+        <Link to="/papers" className="back-link">&larr; Quay lai danh sach bai bao</Link>
+        <p className="eyebrow">Chi tiet bai bao</p>
         <h2>{paper.title}</h2>
 
         <div className="meta-line">
           <span>Paper ID: {paper.id}</span>
-          <span>Năm: {paper.publicationYear}</span>
+          <span>Nam: {paper.publicationYear}</span>
           <span>{paper.journal}</span>
           <span>{paper.sourceName}</span>
         </div>
@@ -96,36 +100,48 @@ export function PaperDetailPage() {
         </div>
 
         <div className="detail-block">
-          <h3>Tóm tắt</h3>
+          <h3>Tom tat</h3>
           <p>{paper.abstractText}</p>
         </div>
 
         <div className="detail-grid">
           <div className="detail-block">
-            <h3>Tác giả</h3>
+            <h3>Tac gia</h3>
             <p>{paper.authors.join(", ")}</p>
           </div>
           <div className="detail-block">
-            <h3>Từ khóa</h3>
+            <h3>Tu khoa</h3>
             <p>{paper.keywords.join(", ")}</p>
           </div>
           <div className="detail-block">
-            <h3>Thông tin nguồn</h3>
+            <h3>Research topics</h3>
+            <p>{paper.topics.length ? paper.topics.join(", ") : "Chua co topic"}</p>
+          </div>
+          <div className="detail-block">
+            <h3>Thong tin nguon</h3>
             <p>{paper.sourceName} - {paper.sourcePaperId}</p>
           </div>
           <div className="detail-block">
-            <h3>Chỉ số trích dẫn</h3>
-            <p>{paper.citationCount} lượt trích dẫn</p>
+            <h3>Chi so trich dan</h3>
+            <p>{paper.citationCount} luot trich dan</p>
           </div>
           <div className="detail-block">
             <h3>DOI</h3>
             <p>{paper.doi}</p>
           </div>
           <div className="detail-block">
-            <h3>Liên kết ngoài</h3>
+            <h3>Loai tai lieu</h3>
+            <p>{paper.documentType}</p>
+          </div>
+          <div className="detail-block">
+            <h3>Ngon ngu</h3>
+            <p>{paper.language}</p>
+          </div>
+          <div className="detail-block">
+            <h3>Lien ket ngoai</h3>
             <p>
               <a href={paper.url} className="inline-link" target="_blank" rel="noreferrer">
-                Mở trang bài báo
+                Mo trang bai bao
               </a>
             </p>
           </div>
@@ -135,30 +151,30 @@ export function PaperDetailPage() {
       <aside className="detail-side">
         <div className="side-card">
           <div className="card-head">
-            <h3>Thao tác nhanh</h3>
+            <h3>Thao tac nhanh</h3>
             <span className={sourceMode === "demo" ? "mode-badge demo" : "mode-badge"}>
               {sourceMode === "demo" ? "Demo" : "Backend"}
             </span>
           </div>
           <button type="button" className="primary-cta" onClick={handleToggleSave}>
-            {isSaved ? "Bỏ lưu bài báo" : "Lưu bài báo"}
+            {isSaved ? "Bo luu bai bao" : "Luu bai bao"}
           </button>
           <button type="button" className="ghost-cta" onClick={handleFollowKeyword}>
-            Theo dõi keyword
+            Theo doi keyword
           </button>
           {feedback ? <div className="state-box inline-state">{feedback}</div> : null}
         </div>
 
         <div className="side-card">
-          <h3>Tóm tắt dữ liệu</h3>
-          <div className="leader-row"><span>Tác giả</span><strong>{paper.authors.length}</strong></div>
-          <div className="leader-row"><span>Từ khóa</span><strong>{paper.keywords.length}</strong></div>
-          <div className="leader-row"><span>Xu hướng</span><strong>{paper.monthlyGrowth}</strong></div>
-          <div className="leader-row"><span>Điểm trend</span><strong>{paper.trendScore}</strong></div>
+          <h3>Tom tat du lieu</h3>
+          <div className="leader-row"><span>Tac gia</span><strong>{paper.authors.length}</strong></div>
+          <div className="leader-row"><span>Tu khoa</span><strong>{paper.keywords.length}</strong></div>
+          <div className="leader-row"><span>Topics</span><strong>{paper.topics.length}</strong></div>
+          <div className="leader-row"><span>Trich dan</span><strong>{paper.citationCount}</strong></div>
         </div>
 
         <div className="side-card">
-          <h3>Bài báo liên quan</h3>
+          <h3>Bai bao lien quan</h3>
           <ul className="simple-list">
             {relatedPapers.map((relatedPaper) => (
               <li key={relatedPaper.id}>

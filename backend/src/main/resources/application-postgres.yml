@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/scientific_journal}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema-postgres.sql
+      data-locations: classpath:data-postgres.sql
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  sync:
+    cron: "0 0 2 * * *"
+

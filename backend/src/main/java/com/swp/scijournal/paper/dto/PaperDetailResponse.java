@@ -7,10 +7,14 @@ public record PaperDetailResponse(
     String title,
     String abstractText,
     Integer publicationYear,
+    String doi,
+    Integer citationCount,
     String journal,
+    String url,
     String sourceName,
     String sourcePaperId,
     List<String> authors,
-    List<String> keywords
+    List<String> keywords,
+    List<String> topics
 ) {
 }
