@@ -14,7 +14,7 @@ export function Header() {
         <span className="brand-mark">SJ</span>
         <div>
           <p className="brand-title">Scientific Journal Tracker</p>
-          <p className="brand-subtitle">Theo dõi xu hướng công bố khoa học</p>
+          <p className="brand-subtitle">Không gian theo dõi xu hướng công bố khoa học</p>
         </div>
       </div>
 
@@ -29,14 +29,15 @@ export function Header() {
             <div className="session-stack">
               <span className="session-name">{session?.fullName ?? session?.username}</span>
               <span className="session-badge">{getRoleLabel(session?.role)}</span>
-              <span className={session?.authMode === "demo" ? "mode-badge demo" : "mode-badge"}>
-                {session?.authMode === "demo" ? "Chế độ demo" : "Kết nối backend"}
-              </span>
+              <span className="mode-badge">Đang hoạt động</span>
             </div>
             <button type="button" className="nav-button" onClick={signOut}>Đăng xuất</button>
           </>
         ) : (
-          <NavLink to="/login" className={navClassName}>Đăng nhập</NavLink>
+          <>
+            <NavLink to="/login" className={navClassName}>Đăng nhập</NavLink>
+            <NavLink to="/register" className={navClassName}>Đăng ký</NavLink>
+          </>
         )}
       </nav>
     </header>

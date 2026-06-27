@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchPapers } from "../services/paperService";
-import { getSavedPaperIds, isPaperSaved, toggleSavedPaper } from "../services/libraryService";
+import { savePaperBookmark } from "../services/libraryService";
 
 const quickKeywords = ["machine learning", "deep learning", "computer vision", "AI Research Trends"];
 const availableSources = ["", "OpenAlex", "Crossref", "Semantic Scholar"];
@@ -20,11 +20,9 @@ export function PaperSearchPage() {
   const [savedPaperIds, setSavedPaperIds] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [sourceMode, setSourceMode] = useState("backend");
   const [sourceCount, setSourceCount] = useState(0);
 
   useEffect(() => {
-    setSavedPaperIds(getSavedPaperIds());
     loadPapers(initialFilters);
   }, []);
 
@@ -35,9 +33,7 @@ export function PaperSearchPage() {
     try {
       const result = await fetchPapers(nextFilters);
       setPapers(result.items);
-      setSourceMode(result.sourceMode);
       setSourceCount(result.sourceCount);
-      setSavedPaperIds(result.items.filter((paper) => isPaperSaved(paper.id)).map((paper) => String(paper.id)));
     } catch (loadError) {
       setError(loadError.message);
     } finally {
@@ -72,18 +68,14 @@ export function PaperSearchPage() {
     loadPapers(nextFilters);
   }
 
-  async function handleToggleSave(paperId) {
+  async function handleSavePaper(paperId) {
     try {
-      const saved = await toggleSavedPaper(paperId);
-      setSavedPaperIds((currentState) => {
-        const normalizedId = String(paperId);
-        if (saved) {
-          return currentState.includes(normalizedId) ? currentState : [...currentState, normalizedId];
-        }
-        return currentState.filter((item) => item !== normalizedId);
-      });
-    } catch (toggleError) {
-      setError(toggleError.message);
+      await savePaperBookmark(paperId);
+      setSavedPaperIds((currentState) => (
+        currentState.includes(String(paperId)) ? currentState : [...currentState, String(paperId)]
+      ));
+    } catch (saveError) {
+      setError(saveError.message);
     }
   }
 
@@ -92,7 +84,7 @@ export function PaperSearchPage() {
       <div className="toolbar">
         <div>
           <p className="eyebrow">Tìm kiếm bài báo</p>
-          <h2>Tra cứu bài báo theo keyword, tác giả và journal</h2>
+          <h2>Tra cứu bài báo theo từ khóa, tác giả và tạp chí</h2>
         </div>
         <div className="toolbar-actions">
           <button type="button" className="ghost-cta compact-ghost" onClick={handleReset}>Xóa bộ lọc</button>
@@ -110,8 +102,8 @@ export function PaperSearchPage() {
           <span>Nguồn học thuật</span>
         </div>
         <div className="mini-stat">
-          <strong>{sourceMode === "demo" ? "Demo" : "Live"}</strong>
-          <span>Chế độ dữ liệu</span>
+          <strong>Live</strong>
+          <span>Trạng thái dữ liệu</span>
         </div>
       </div>
 
@@ -120,11 +112,9 @@ export function PaperSearchPage() {
           <div className="panel-section-head">
             <div>
               <h3>Bộ lọc</h3>
-              <p>Tìm theo paper, tác giả, journal và nguồn dữ liệu.</p>
+              <p>Tìm theo bài báo, tác giả, tạp chí và nguồn xuất bản.</p>
             </div>
-            <span className={sourceMode === "demo" ? "mode-badge demo" : "mode-badge"}>
-              {sourceMode === "demo" ? "Dữ liệu demo" : "Dữ liệu backend"}
-            </span>
+            <span className="mode-badge">Dữ liệu hiện có</span>
           </div>
 
           <div className="filter-grid">
@@ -183,14 +173,14 @@ export function PaperSearchPage() {
         <div className="results-panel">
           <div className="results-head">
             <strong>{isLoading ? "Đang tải..." : `${papers.length} kết quả tìm thấy`}</strong>
-            <span>{sourceMode === "demo" ? "Đang dùng dữ liệu demo" : "Dữ liệu thật từ backend"}</span>
+            <span>Dữ liệu đang hiển thị từ hệ thống</span>
           </div>
 
           {error ? <div className="state-box error-box">{error}</div> : null}
           {!error && isLoading ? <div className="state-box">Đang tải danh sách bài báo...</div> : null}
           {!error && !isLoading && papers.length === 0 ? (
             <div className="state-box">
-              Không tìm thấy bài báo phù hợp. Hãy thử đổi keyword hoặc bớt điều kiện lọc.
+              Không tìm thấy bài báo phù hợp. Hãy thử đổi từ khóa hoặc bớt điều kiện lọc.
             </div>
           ) : null}
 
@@ -227,7 +217,7 @@ export function PaperSearchPage() {
 
                     <div className="paper-actions">
                       <Link to={`/papers/${paper.id}`} className="text-link">Xem chi tiết</Link>
-                      <button type="button" className="card-action" onClick={() => handleToggleSave(paper.id)}>
+                      <button type="button" className="card-action" onClick={() => handleSavePaper(paper.id)} disabled={saved}>
                         {saved ? "Đã lưu" : "Lưu"}
                       </button>
                     </div>

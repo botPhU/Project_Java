@@ -7,7 +7,21 @@ const AuthContext = createContext(null);
 function readStoredSession() {
   try {
     const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) {
+      return null;
+    }
+
+    const session = JSON.parse(raw);
+    const isValidBackendSession = Boolean(
+      session?.username && session?.authMode === "backend" && session?.basicAuthToken
+    );
+
+    if (!isValidBackendSession) {
+      window.localStorage.removeItem(AUTH_STORAGE_KEY);
+      return null;
+    }
+
+    return session;
   } catch {
     return null;
   }

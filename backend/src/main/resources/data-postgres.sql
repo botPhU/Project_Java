@@ -3,22 +3,43 @@ VALUES ('ADMIN'), ('LECTURER_STUDENT'), ('RESEARCHER')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO users (username, email, password, full_name, active, institution, research_interests, role_id)
-SELECT 'admin', 'admin@swp.local', '$2a$10$5Q3sQkYkFhR8YjvQ8Fz0F.C2aV3bIhK6M6Q8kG7x8OQ2X3o7r0V6e', 'System Administrator', TRUE, 'FPT University', 'System administration', r.id
+SELECT 'admin', 'admin@swp.local', '$2a$10$WMAsghFcZmksyWnhtKk4a.UoZwpvYBXPqnear0Mg//iSn72uwRsXG', 'System Administrator', TRUE, 'FPT University', 'System administration', r.id
 FROM roles r
 WHERE r.name = 'ADMIN'
-ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO UPDATE SET
+    email = EXCLUDED.email,
+    password = EXCLUDED.password,
+    full_name = EXCLUDED.full_name,
+    active = EXCLUDED.active,
+    institution = EXCLUDED.institution,
+    research_interests = EXCLUDED.research_interests,
+    role_id = EXCLUDED.role_id;
 
 INSERT INTO users (username, email, password, full_name, active, institution, research_interests, role_id)
-SELECT 'student01', 'student01@swp.local', '$2a$10$5Q3sQkYkFhR8YjvQ8Fz0F.C2aV3bIhK6M6Q8kG7x8OQ2X3o7r0V6e', 'Student Demo', TRUE, 'FPT University', 'Machine learning, literature review', r.id
+SELECT 'student01', 'student01@swp.local', '$2a$10$WMAsghFcZmksyWnhtKk4a.UoZwpvYBXPqnear0Mg//iSn72uwRsXG', 'Student Demo', TRUE, 'FPT University', 'Machine learning, literature review', r.id
 FROM roles r
 WHERE r.name = 'LECTURER_STUDENT'
-ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO UPDATE SET
+    email = EXCLUDED.email,
+    password = EXCLUDED.password,
+    full_name = EXCLUDED.full_name,
+    active = EXCLUDED.active,
+    institution = EXCLUDED.institution,
+    research_interests = EXCLUDED.research_interests,
+    role_id = EXCLUDED.role_id;
 
 INSERT INTO users (username, email, password, full_name, active, institution, research_interests, role_id)
-SELECT 'researcher01', 'researcher01@swp.local', '$2a$10$5Q3sQkYkFhR8YjvQ8Fz0F.C2aV3bIhK6M6Q8kG7x8OQ2X3o7r0V6e', 'Researcher Demo', TRUE, 'FPT University', 'AI research trends, scientometrics', r.id
+SELECT 'researcher01', 'researcher01@swp.local', '$2a$10$WMAsghFcZmksyWnhtKk4a.UoZwpvYBXPqnear0Mg//iSn72uwRsXG', 'Researcher Demo', TRUE, 'FPT University', 'AI research trends, scientometrics', r.id
 FROM roles r
 WHERE r.name = 'RESEARCHER'
-ON CONFLICT (username) DO NOTHING;
+ON CONFLICT (username) DO UPDATE SET
+    email = EXCLUDED.email,
+    password = EXCLUDED.password,
+    full_name = EXCLUDED.full_name,
+    active = EXCLUDED.active,
+    institution = EXCLUDED.institution,
+    research_interests = EXCLUDED.research_interests,
+    role_id = EXCLUDED.role_id;
 
 INSERT INTO journals (name, issn, publisher, impact_factor, subject_area, country, website_url)
 VALUES
@@ -240,5 +261,7 @@ INSERT INTO api_data_sources (source_name, base_url, active, rate_limit_per_minu
 VALUES
     ('OpenAlex', 'https://api.openalex.org', TRUE, 60, CURRENT_TIMESTAMP),
     ('Crossref', 'https://api.crossref.org', TRUE, 50, CURRENT_TIMESTAMP),
-    ('Semantic Scholar', 'https://api.semanticscholar.org/graph/v1', TRUE, 30, CURRENT_TIMESTAMP)
+    ('Semantic Scholar', 'https://api.semanticscholar.org/graph/v1', TRUE, 30, CURRENT_TIMESTAMP),
+    ('ORCID', 'https://pub.orcid.org', FALSE, 10, NULL),
+    ('OpenCitations', 'https://api.opencitations.net/index/v1', FALSE, 20, NULL)
 ON CONFLICT (source_name) DO NOTHING;

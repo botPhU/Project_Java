@@ -2,18 +2,13 @@
 
 ## 1. Mục đích
 
-File này hướng dẫn team chạy backend với PostgreSQL thay vì H2 in-memory.
-
-Repo hiện hỗ trợ 2 cách chạy:
-
-- `default profile`: dùng `H2` để demo nhanh
-- `postgres profile`: dùng `PostgreSQL` để làm việc với database thực tế hơn
+File này hướng dẫn team chạy backend với PostgreSQL. Repo đã được dọn để chỉ còn một luồng chạy duy nhất với Postgres.
 
 ## 2. Các file liên quan
 
 Backend đã có sẵn các file:
 
-- `backend/src/main/resources/application-postgres.yml`
+- `backend/src/main/resources/application.yml`
 - `backend/src/main/resources/schema-postgres.sql`
 - `backend/src/main/resources/data-postgres.sql`
 - `docker-compose.yml`
@@ -25,7 +20,7 @@ Cần có một trong hai:
 - `Docker Desktop`
 - hoặc `PostgreSQL` cài trực tiếp trên máy
 
-Nếu chỉ muốn chạy nhanh và thống nhất với team, nên dùng `Docker`.
+Nếu muốn chạy nhanh và thống nhất với team, nên dùng `Docker`.
 
 ## 4. Cách chạy bằng Docker
 
@@ -43,7 +38,7 @@ Thông tin database mặc định:
 - `username`: `postgres`
 - `password`: `postgres`
 
-## 5. Chạy backend với profile postgres
+## 5. Chạy backend
 
 Đi vào thư mục backend:
 
@@ -54,7 +49,7 @@ cd backend
 Chạy bằng Maven:
 
 ```powershell
-mvn spring-boot:run "-Dspring-boot.run.profiles=postgres"
+mvn spring-boot:run
 ```
 
 ## 6. Nếu muốn đổi thông số kết nối
@@ -65,7 +60,7 @@ Có thể set biến môi trường trước khi chạy:
 $env:DB_URL="jdbc:postgresql://localhost:5432/scientific_journal"
 $env:DB_USERNAME="postgres"
 $env:DB_PASSWORD="postgres"
-mvn spring-boot:run "-Dspring-boot.run.profiles=postgres"
+mvn spring-boot:run
 ```
 
 ## 7. Nếu cài PostgreSQL thủ công
@@ -76,11 +71,11 @@ Tạo database tên:
 scientific_journal
 ```
 
-Sau đó chạy backend bằng profile `postgres` với đúng `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`.
+Sau đó chạy backend với đúng `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`.
 
 ## 8. Schema và seed data
 
-Khi chạy profile `postgres`, backend sẽ dùng:
+Khi chạy backend, ứng dụng sẽ dùng:
 
 - `schema-postgres.sql` để tạo bảng
 - `data-postgres.sql` để nạp dữ liệu mẫu
@@ -111,7 +106,7 @@ docker compose up -d
 
 ## 10. Cách kiểm tra nhanh
 
-Sau khi backend chạy bằng profile `postgres`, có thể test nhanh:
+Sau khi backend chạy, có thể test nhanh:
 
 - backend health
 - đăng nhập bằng user demo
@@ -128,4 +123,4 @@ Một số user demo seed sẵn:
 
 - Nếu đang làm frontend hoặc service layer, nên pull `main` mới nhất trước
 - Nếu branch của bạn đang dùng entity cũ, hãy merge `main` trước khi code tiếp
-- `postgres` là lựa chọn nên dùng khi làm việc nhóm để tránh lệch dữ liệu giữa các máy
+- Cả team nên dùng cùng một database Postgres để tránh lệch dữ liệu giữa các máy

@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface ResearchPaperRepository extends JpaRepository<ResearchPaper, Long> {
 
+    Optional<ResearchPaper> findBySourceNameIgnoreCaseAndSourcePaperId(String sourceName, String sourcePaperId);
+
     @EntityGraph(attributePaths = {"journal", "authors", "keywords", "topics"})
     @Query("select p from ResearchPaper p where p.id = :id")
     Optional<ResearchPaper> findWithDetailsById(@Param("id") Long id);

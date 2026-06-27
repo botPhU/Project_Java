@@ -2,20 +2,22 @@ spring:
   application:
     name: scientific-journal-tracker
   datasource:
-    url: jdbc:h2:mem:scientific_journal;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/scientific_journal}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
     open-in-view: false
-  h2:
-    console:
-      enabled: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema-postgres.sql
+      data-locations: classpath:data-postgres.sql
 
 management:
   endpoints:
@@ -26,3 +28,6 @@ management:
 app:
   sync:
     cron: "0 0 2 * * *"
+    openalex:
+      query: "artificial intelligence"
+      per-page: 10

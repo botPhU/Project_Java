@@ -42,8 +42,7 @@ project_Java
 - Spring Web
 - Spring Security
 - Spring Data JPA
-- H2 cho demo nhanh
-- PostgreSQL cho database thực tế
+- PostgreSQL cho database chính thức của dự án
 
 ### Frontend
 
@@ -75,7 +74,13 @@ project_Java
 cd backend
 ```
 
-Nếu máy đã cài Maven:
+Chạy database bằng Docker:
+
+```powershell
+docker compose up -d
+```
+
+Chạy backend:
 
 ```powershell
 mvn spring-boot:run
@@ -85,19 +90,13 @@ Nếu dùng IDE như IntelliJ IDEA hoặc VS Code, có thể chạy class:
 
 - `com.swp.scijournal.ScientificJournalApplication`
 
-### 5.1.1. Chạy backend với PostgreSQL
+### 5.1.1. Cấu hình PostgreSQL mặc định
 
-Repo đã có sẵn profile PostgreSQL:
+Repo đã được dọn về một luồng duy nhất với PostgreSQL:
 
-- `backend/src/main/resources/application-postgres.yml`
+- `backend/src/main/resources/application.yml`
 - `backend/src/main/resources/schema-postgres.sql`
 - `backend/src/main/resources/data-postgres.sql`
-
-Chạy database bằng Docker:
-
-```powershell
-docker compose up -d
-```
 
 Database mặc định:
 
@@ -107,27 +106,19 @@ Database mặc định:
 - `username`: `postgres`
 - `password`: `postgres`
 
-Chạy backend với profile postgres:
-
-```powershell
-cd backend
-mvn spring-boot:run "-Dspring-boot.run.profiles=postgres"
-```
-
 Hoặc set biến môi trường nếu muốn đổi kết nối:
 
 ```powershell
 $env:DB_URL="jdbc:postgresql://localhost:5432/scientific_journal"
 $env:DB_USERNAME="postgres"
 $env:DB_PASSWORD="postgres"
-mvn spring-boot:run "-Dspring-boot.run.profiles=postgres"
+mvn spring-boot:run
 ```
 
 Ghi chú:
 
-- Profile `default` vẫn dùng `H2 in-memory` cho việc demo nhanh.
-- Profile `postgres` sẽ dùng schema và seed data trong resources để khởi tạo database.
-- Nếu đã từng chạy profile postgres với schema cũ, nên xóa volume Docker cũ trước khi chạy lại:
+- Backend mặc định kết nối PostgreSQL và dùng schema cùng seed data trong `resources` để khởi tạo dữ liệu.
+- Nếu đã từng chạy schema cũ, nên xóa volume Docker cũ trước khi chạy lại:
 
 ```powershell
 docker compose down -v
@@ -191,6 +182,6 @@ Xem thêm:
 ## 9. Ghi chú
 
 - Bộ khung hiện tại được tối ưu cho mục đích đồ án và phát triển theo nhóm
-- Backend hiện vẫn là skeleton nghiệp vụ ở một số module, nhưng đã có profile PostgreSQL để chuyển dần sang database thực tế
+- Backend hiện vẫn là skeleton nghiệp vụ ở một số module, nhưng toàn bộ luồng chạy đã thống nhất về PostgreSQL để cả team làm việc cùng một chuẩn dữ liệu
 - Frontend hiện là khung giao diện ban đầu để nhóm phát triển tiếp các màn hình chính
 - Database PostgreSQL đã được tách thành `schema + seed data` riêng để hỗ trợ triển khai và test ổn định hơn

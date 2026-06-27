@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchPaperDetail, getRelatedPapers } from "../services/paperService";
-import { followKeyword, isPaperSaved, toggleSavedPaper } from "../services/libraryService";
+import { followKeyword, savePaperBookmark } from "../services/libraryService";
 
 export function PaperDetailPage() {
   const { paperId } = useParams();
@@ -9,7 +9,6 @@ export function PaperDetailPage() {
   const [relatedPapers, setRelatedPapers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [sourceMode, setSourceMode] = useState("backend");
   const [isSaved, setIsSaved] = useState(false);
   const [feedback, setFeedback] = useState("");
 
@@ -20,11 +19,12 @@ export function PaperDetailPage() {
       setFeedback("");
 
       try {
-        const result = await fetchPaperDetail(paperId);
-        setPaper(result.paper);
-        setSourceMode(result.sourceMode);
-        setRelatedPapers(getRelatedPapers(paperId, 3));
-        setIsSaved(isPaperSaved(paperId));
+        const [paperResult, relatedResult] = await Promise.all([
+          fetchPaperDetail(paperId),
+          getRelatedPapers(paperId, 3)
+        ]);
+        setPaper(paperResult);
+        setRelatedPapers(relatedResult);
       } catch (loadError) {
         setError(loadError.message);
       } finally {
@@ -35,24 +35,27 @@ export function PaperDetailPage() {
     loadPaperDetail();
   }, [paperId]);
 
-  async function handleToggleSave() {
+  async function handleSavePaper() {
     try {
-      const nextSavedState = await toggleSavedPaper(paperId, !isSaved);
-      setIsSaved(nextSavedState);
-      setFeedback(nextSavedState ? "Đã lưu bài báo vào thư viện cá nhân." : "Đã bỏ bài báo khỏi thư viện cá nhân.");
-    } catch (toggleError) {
-      setFeedback(toggleError.message);
+      await savePaperBookmark(paperId);
+      setIsSaved(true);
+      setFeedback("Đã lưu bài báo vào thư viện cá nhân.");
+    } catch (saveError) {
+      setFeedback(saveError.message);
     }
   }
 
-  function handleFollowKeyword() {
+  async function handleFollowKeyword() {
     if (!paper?.keywords?.length) {
       return;
     }
 
-    const followedKeywords = followKeyword(paper.keywords[0]);
-    const followedKeyword = followedKeywords.at(-1) ?? paper.keywords[0];
-    setFeedback(`Đã theo dõi keyword "${followedKeyword}".`);
+    try {
+      await followKeyword(paper.keywords[0]);
+      setFeedback(`Đã theo dõi keyword "${paper.keywords[0]}".`);
+    } catch (followError) {
+      setFeedback(followError.message);
+    }
   }
 
   if (isLoading) {
@@ -152,12 +155,10 @@ export function PaperDetailPage() {
         <div className="side-card">
           <div className="card-head">
             <h3>Thao tác nhanh</h3>
-            <span className={sourceMode === "demo" ? "mode-badge demo" : "mode-badge"}>
-              {sourceMode === "demo" ? "Demo" : "Backend"}
-            </span>
+            <span className="mode-badge">Backend</span>
           </div>
-          <button type="button" className="primary-cta" onClick={handleToggleSave}>
-            {isSaved ? "Bỏ lưu bài báo" : "Lưu bài báo"}
+          <button type="button" className="primary-cta" onClick={handleSavePaper} disabled={isSaved}>
+            {isSaved ? "Đã lưu bài báo" : "Lưu bài báo"}
           </button>
           <button type="button" className="ghost-cta" onClick={handleFollowKeyword}>
             Theo dõi keyword

@@ -30,7 +30,7 @@ export function DashboardPage() {
   if (isLoading) {
     return (
       <section className="mock-screen dashboard-screen">
-        <div className="state-box">Đang tải dashboard...</div>
+        <div className="state-box">Đang tải dữ liệu tổng quan...</div>
       </section>
     );
   }
@@ -53,8 +53,8 @@ export function DashboardPage() {
     <section className="mock-screen dashboard-screen">
       <div className="dashboard-head">
         <div>
-          <p className="eyebrow">Dashboard xu hướng</p>
-          <h2>Tổng quan xu hướng công bố theo keyword và journal</h2>
+          <p className="eyebrow">Tổng quan nghiên cứu</p>
+          <h2>Tổng quan xu hướng công bố theo từ khóa và tạp chí</h2>
         </div>
         <div className="dashboard-controls">
           <div className="period-switch">
@@ -69,9 +69,7 @@ export function DashboardPage() {
               </button>
             ))}
           </div>
-          <span className={overview.sourceMode === "demo" ? "mode-badge demo" : "mode-badge"}>
-            {overview.sourceMode === "demo" ? "Đang dùng dữ liệu demo" : "Đang dùng dữ liệu backend"}
-          </span>
+          <span className="mode-badge">Dữ liệu hiện có</span>
         </div>
       </div>
 
@@ -103,7 +101,7 @@ export function DashboardPage() {
 
         <div className="chart-card">
           <div className="card-head">
-            <h3>Top keyword</h3>
+            <h3>Top từ khóa</h3>
             <span>Xếp hạng hiện tại</span>
           </div>
           <div className="leader-list">
@@ -124,7 +122,7 @@ export function DashboardPage() {
         <div className="chart-card">
           <div className="card-head">
             <h3>Chủ đề đang theo dõi</h3>
-            <span>Ưu tiên trong giai đoạn này</span>
+            <span>Những trọng tâm nổi bật hiện tại</span>
           </div>
           <div className="topic-list">
             {overview.monitoredTopics.map((topic) => (
@@ -142,7 +140,7 @@ export function DashboardPage() {
         <div className="chart-card">
           <div className="card-head">
             <h3>Gợi ý hành động</h3>
-            <span>Cho nhóm nghiên cứu</span>
+            <span>Đề xuất để tiếp tục phân tích</span>
           </div>
           <ul className="simple-list">
             {overview.suggestions.map((item) => (
@@ -156,7 +154,7 @@ export function DashboardPage() {
         <div className="chart-card">
           <div className="card-head">
             <h3>Thông báo gần đây</h3>
-            <span>Dựa trên dữ liệu mới cập nhật</span>
+            <span>Các cập nhật bạn nên lưu ý</span>
           </div>
           <div className="topic-list">
             {overview.notifications.map((item) => (
@@ -173,8 +171,8 @@ export function DashboardPage() {
 
         <div className="chart-card">
           <div className="card-head">
-            <h3>Tình trạng nguồn dữ liệu</h3>
-            <span>Phục vụ đồng bộ backend</span>
+            <h3>Nguồn dữ liệu đang theo dõi</h3>
+            <span>Phân bổ theo bài báo hiện có</span>
           </div>
           <div className="topic-list">
             {overview.sourceStatus.map((item) => (

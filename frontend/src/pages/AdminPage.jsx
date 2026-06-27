@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchAdminOverview, runManualSync } from "../services/adminService";
 
-const adminTabs = ["Tổng quan", "Người dùng", "Nguồn dữ liệu", "Lịch đồng bộ"];
+const adminTabs = ["Tổng quan", "Người dùng", "Nguồn dữ liệu", "Lịch cập nhật"];
 
 export function AdminPage() {
   const [activeTab, setActiveTab] = useState("Tổng quan");
@@ -36,7 +36,7 @@ export function AdminPage() {
 
     try {
       const result = await runManualSync();
-      setFeedback(result.message ?? "Đã gửi yêu cầu đồng bộ.");
+      setFeedback(result.message ?? "Đã gửi yêu cầu cập nhật dữ liệu.");
     } catch (syncError) {
       setError(syncError.message);
     } finally {
@@ -85,13 +85,11 @@ export function AdminPage() {
       <div className="admin-main">
         <div className="admin-banner">
           <div>
-            <p className="eyebrow">System Administrator</p>
-            <h2>Kiểm soát hệ thống, nguồn dữ liệu và tiến trình đồng bộ</h2>
+            <p className="eyebrow">Quản trị hệ thống</p>
+            <h2>Kiểm soát tài khoản, nguồn dữ liệu và tiến trình cập nhật</h2>
           </div>
           <div className="banner-actions">
-            <span className={overview.sourceMode === "demo" ? "mode-badge demo" : "mode-badge"}>
-              {overview.sourceMode === "demo" ? "Đang dùng dữ liệu demo" : "Đang dùng dữ liệu backend"}
-            </span>
+            <span className="mode-badge">Dữ liệu hiện có</span>
             <button type="button" className="primary-cta compact" onClick={handleRunSync} disabled={isSyncing}>
               {isSyncing ? "Đang gửi..." : "Chạy đồng bộ"}
             </button>

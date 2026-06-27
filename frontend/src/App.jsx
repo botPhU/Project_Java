@@ -7,6 +7,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
 import { PaperDetailPage } from "./pages/PaperDetailPage";
 import { PaperSearchPage } from "./pages/PaperSearchPage";
+import { RegisterPage } from "./pages/RegisterPage";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route element={<PublicOnlyRoute />}>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/papers" element={<PaperSearchPage />} />

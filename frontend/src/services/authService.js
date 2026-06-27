@@ -1,41 +1,26 @@
-import { demoUsers } from "../data/demoData";
-import { apiPost, shouldUseDemoFallback } from "./apiClient";
+import { ApiError, apiPost } from "./apiClient";
 
-function getRoleLabel(role) {
-  switch (role) {
-    case "ADMIN":
-      return "Quản trị hệ thống";
-    case "LECTURER_STUDENT":
-      return "Giảng viên / Sinh viên";
-    case "RESEARCHER":
-      return "Nhà nghiên cứu";
-    default:
-      return role;
-  }
-}
-
-function normalizeUser(user, authMode = "backend") {
+function normalizeUser(user) {
   return {
-    id: user.id,
+    id: user.id ?? user.userId,
     username: user.username,
     fullName: user.fullName ?? user.username,
     role: user.role,
-    authMode,
+    authMode: "backend",
     basicAuthToken: user.basicAuthToken ?? null
   };
 }
 
 function createBasicAuthToken(username, password) {
-  return window.btoa(`${username}:${password}`);
-}
+  const credentials = `${username}:${password}`;
+  const bytes = new TextEncoder().encode(credentials);
+  let binary = "";
 
-export function getDemoAccounts() {
-  return demoUsers.map((user) => ({
-    username: user.username,
-    password: user.password,
-    label: `${user.fullName} - ${getRoleLabel(user.role)}`,
-    role: user.role
-  }));
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+
+  return window.btoa(binary);
 }
 
 export async function login(credentials) {
@@ -44,28 +29,39 @@ export async function login(credentials) {
     password: credentials.password
   };
 
+  const payload = await apiPost("/api/v1/auth/login", trimmedCredentials, {
+    defaultErrorMessage: "Đăng nhập không thành công."
+  });
+
+  return normalizeUser({
+    ...(payload.data ?? payload),
+    basicAuthToken: createBasicAuthToken(trimmedCredentials.username, trimmedCredentials.password)
+  });
+}
+
+export async function register(payload) {
+  const registerPayload = {
+    username: payload.username.trim(),
+    email: payload.email.trim(),
+    password: payload.password,
+    fullName: payload.fullName.trim(),
+    role: payload.role,
+    institution: payload.institution?.trim() || "",
+    researchInterests: payload.researchInterests?.trim() || ""
+  };
+
   try {
-    const payload = await apiPost("/api/v1/auth/login", trimmedCredentials, {
-      defaultErrorMessage: "Đăng nhập không thành công."
+    const response = await apiPost("/api/v1/auth/register", registerPayload, {
+      defaultErrorMessage: "Đăng ký không thành công."
     });
 
-    return normalizeUser(
-      {
-        ...(payload.data ?? payload),
-        basicAuthToken: createBasicAuthToken(trimmedCredentials.username, trimmedCredentials.password)
-      },
-      "backend"
-    );
+    return response.data ?? response;
   } catch (error) {
-    if (shouldUseDemoFallback(error)) {
-      const matchedUser = demoUsers.find((user) => (
-        user.username === trimmedCredentials.username &&
-        user.password === trimmedCredentials.password
-      ));
-
-      if (matchedUser) {
-        return normalizeUser(matchedUser, "demo");
-      }
+    if (error instanceof ApiError && error.isNetworkError) {
+      throw new ApiError("Không thể tạo tài khoản vào lúc này. Vui lòng thử lại sau.", {
+        code: error.code,
+        isNetworkError: true
+      });
     }
 
     throw error;
