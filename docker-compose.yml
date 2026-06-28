@@ -1,17 +1,36 @@
+version: '3.8'
+
 services:
-  postgres:
-    image: postgres:16
-    container_name: scientific-journal-postgres
-    restart: unless-stopped
+  # Cấu hình container Database PostgreSQL
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: postgres_container
+    restart: always
     environment:
       POSTGRES_DB: scientific_journal
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: your_password_here  # Thay thế bằng mật khẩu của bạn
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
+
+  # Cấu hình container Backend (Spring Boot)
+  backend_app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spring_backend_container
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      # Trỏ DB_URL về tên service "postgres_db" thay vì "localhost"
+      DB_URL: jdbc:postgresql://postgres_db:5432/scientific_journal
+      DB_USERNAME: postgres
+      DB_PASSWORD: your_password_here        # Trùng với mật khẩu ở trên
+    depends_on:
+      - postgres_db
 
 volumes:
-  postgres_data:
-
+  pg_data:
