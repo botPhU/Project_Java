@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { getRoleLabel, useAuth } from "../context/AuthContext";
-import { getDemoAccounts, login } from "../services/authService";
-
-const demoAccounts = getDemoAccounts();
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { login } from "../services/authService";
 
 const productHighlights = [
-  "Theo dõi xu hướng công bố theo keyword, tác giả và journal",
+  "Theo dõi xu hướng công bố theo từ khóa, tác giả và tạp chí",
   "Tra cứu chi tiết bài báo từ nhiều nguồn học thuật",
-  "Quản trị nguồn dữ liệu và tiến trình đồng bộ tập trung"
+  "Lưu bài báo quan tâm và theo dõi các chủ đề nổi bật"
 ];
 
 export function LoginPage() {
@@ -16,13 +14,11 @@ export function LoginPage() {
   const location = useLocation();
   const { signIn } = useAuth();
   const [credentials, setCredentials] = useState({
-    username: "student01",
-    password: "123456"
+    username: location.state?.prefillUsername ?? "",
+    password: location.state?.prefillPassword ?? ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-
-  const selectedDemoAccount = demoAccounts.find((account) => account.username === credentials.username);
+  const [error, setError] = useState(location.state?.message ?? "");
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -54,21 +50,21 @@ export function LoginPage() {
   return (
     <section className="mock-screen auth-screen">
       <div className="auth-art">
-        <p className="eyebrow">Đăng nhập hệ thống</p>
-        <h2>Truy cập kho dữ liệu xu hướng công bố khoa học</h2>
+        <p className="eyebrow">Không gian nghiên cứu</p>
+        <h2>Đăng nhập để theo dõi xu hướng công bố khoa học</h2>
         <p>
-          Giao diện này đã sẵn sàng cho cả lúc kết nối backend và lúc demo nội bộ.
-          Bạn có thể dùng tài khoản mẫu để kiểm tra toàn bộ luồng frontend ngay lập tức.
+          Truy cập tài khoản của bạn để xem tổng quan xu hướng, tìm kiếm bài báo,
+          quản lý danh sách lưu và theo dõi các chủ đề nghiên cứu quan trọng.
         </p>
 
         <div className="auth-metrics">
           <div className="metric-card">
             <strong>24,8K</strong>
-            <span>Bản ghi bài báo đã đồng bộ</span>
+            <span>Bản ghi bài báo đang được theo dõi</span>
           </div>
           <div className="metric-card">
             <strong>380+</strong>
-            <span>Từ khóa được theo dõi mỗi tháng</span>
+            <span>Từ khóa nổi bật được tổng hợp mỗi tháng</span>
           </div>
         </div>
 
@@ -78,19 +74,6 @@ export function LoginPage() {
               <span className="highlight-dot" />
               <p>{item}</p>
             </div>
-          ))}
-        </div>
-
-        <div className="demo-account-list">
-          {demoAccounts.map((account) => (
-            <button
-              key={account.username}
-              type="button"
-              className="demo-chip"
-              onClick={() => setCredentials({ username: account.username, password: account.password })}
-            >
-              {account.label}
-            </button>
           ))}
         </div>
       </div>
@@ -105,7 +88,7 @@ export function LoginPage() {
 
         <label className="field">
           <span>Tên đăng nhập</span>
-          <input name="username" value={credentials.username} onChange={handleChange} autoComplete="username" />
+          <input name="username" value={credentials.username} onChange={handleChange} autoComplete="username" required />
         </label>
 
         <label className="field">
@@ -116,21 +99,22 @@ export function LoginPage() {
             onChange={handleChange}
             type="password"
             autoComplete="current-password"
+            required
           />
         </label>
 
         <div className="inline-row">
-          <span className="status-pill">{getRoleLabel(selectedDemoAccount?.role ?? "LECTURER_STUDENT")}</span>
-          <span className="helper-link">Nếu backend chưa bật, hệ thống sẽ tự chuyển sang chế độ demo.</span>
+          <span className="helper-link">Sử dụng tài khoản đã đăng ký để truy cập không gian làm việc cá nhân.</span>
         </div>
 
         <button type="submit" className="primary-cta" disabled={isSubmitting}>
-          {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập vào hệ thống"}
+          {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
         </button>
 
-        <button type="button" className="ghost-cta" disabled>
-          Tạo tài khoản
-        </button>
+        <div className="auth-secondary-actions">
+          <span className="helper-link">Chưa có tài khoản?</span>
+          <Link to="/register" className="text-link">Tạo tài khoản mới</Link>
+        </div>
       </form>
     </section>
   );

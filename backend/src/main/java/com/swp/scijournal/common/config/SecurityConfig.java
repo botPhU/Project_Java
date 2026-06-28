@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -62,8 +63,10 @@ public class SecurityConfig {
             .cors(cors -> {})
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**", "/actuator/health", "/h2-console/**").permitAll()
-                .requestMatchers("/api/v1/papers/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/error", "/actuator/health").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/papers/**").permitAll()
                 .anyRequest().authenticated()
             )
             .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint((request, response, authException) -> {
@@ -71,12 +74,10 @@ public class SecurityConfig {
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.getWriter().write(
-                    "{\"success\":false,\"message\":\"Yêu cầu đăng nhập trước khi truy cập API này.\",\"data\":null}"
+                    "{\"success\":false,\"message\":\"Y\\u00eau c\\u1ea7u \\u0111\\u0103ng nh\\u1eadp tr\\u01b0\\u1edbc khi truy c\\u1eadp API n\\u00e0y.\",\"data\":null}"
                 );
             }))
             .authenticationProvider(authenticationProvider);
-
-        http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
         return http.build();
     }

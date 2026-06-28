@@ -58,7 +58,7 @@ export async function apiRequest(path, options = {}) {
       body
     });
   } catch {
-    throw new ApiError("Không kết nối được backend. Hãy chạy Spring Boot ở cổng 8080 trước.", {
+    throw new ApiError("Không thể kết nối tới hệ thống. Vui lòng thử lại sau.", {
       code: "NETWORK_ERROR",
       isNetworkError: true
     });
@@ -93,8 +93,4 @@ export function apiPost(path, data, options = {}) {
     },
     body: JSON.stringify(data)
   });
-}
-
-export function shouldUseDemoFallback(error) {
-  return error instanceof ApiError && (error.isNetworkError || error.status === 404 || error.status >= 500);
 }

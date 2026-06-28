@@ -1,17 +1,17 @@
 const workflow = [
-  "Frontend gửi request tìm kiếm hoặc xem dashboard.",
-  "Backend xử lý nghiệp vụ và truy vấn cơ sở dữ liệu.",
-  "Job đồng bộ định kỳ nạp metadata từ OpenAlex, Crossref, Semantic Scholar.",
-  "Bảng trend tổng hợp được cập nhật để phục vụ biểu đồ nhanh hơn.",
-  "Frontend hiển thị kết quả cho người dùng dưới dạng danh sách, chart và thông báo."
+  "Người dùng tìm kiếm bài báo hoặc mở trang tổng quan xu hướng.",
+  "Hệ thống truy xuất dữ liệu liên quan theo từ khóa, tác giả và nguồn học thuật.",
+  "Dữ liệu được tổng hợp để tạo biểu đồ, danh sách từ khóa và chủ đề nổi bật.",
+  "Các bài báo quan trọng có thể được lưu lại để theo dõi lâu dài.",
+  "Thông tin cập nhật tiếp tục được phản ánh vào bảng điều khiển và khu vực quản trị."
 ];
 
 export function WorkflowSection() {
   return (
     <section className="section" id="quy-trinh">
       <div className="section-heading">
-        <p className="eyebrow">Quy trình xử lý</p>
-        <h2>Luồng nghiệp vụ tổng quát của hệ thống</h2>
+        <p className="eyebrow">Cách hệ thống vận hành</p>
+        <h2>Luồng sử dụng tổng quát cho việc theo dõi công bố khoa học</h2>
       </div>
       <div className="workflow">
         {workflow.map((step, index) => (

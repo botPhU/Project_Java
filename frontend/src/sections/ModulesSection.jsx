@@ -1,21 +1,21 @@
 const modules = [
-  "Auth và phân quyền",
-  "Quản lý user",
-  "Tìm kiếm paper",
-  "Trend tracking",
-  "Dashboard",
-  "Bookmark và follow",
-  "Notification",
-  "Đồng bộ academic API",
-  "Quản trị hệ thống"
+  "Đăng nhập và quản lý tài khoản",
+  "Tra cứu bài báo",
+  "Phân tích xu hướng theo từ khóa",
+  "Tổng quan dữ liệu nghiên cứu",
+  "Lưu bài báo quan tâm",
+  "Theo dõi chủ đề nổi bật",
+  "Thông báo cập nhật",
+  "Quản lý nguồn dữ liệu",
+  "Không gian quản trị"
 ];
 
 export function ModulesSection() {
   return (
     <section className="section" id="module">
       <div className="section-heading">
-        <p className="eyebrow">Kiến trúc module</p>
-        <h2>Các khối chức năng được tách rõ để chia việc</h2>
+        <p className="eyebrow">Các tính năng chính</p>
+        <h2>Những khối chức năng giúp theo dõi nghiên cứu hiệu quả hơn</h2>
       </div>
       <div className="module-list">
         {modules.map((moduleName, index) => (

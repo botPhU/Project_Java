@@ -386,12 +386,19 @@ a {
 }
 
 .field input,
-.field select {
+.field select,
+.field textarea {
   width: 100%;
   padding: 14px 16px;
   border-radius: 14px;
   border: 1px solid rgba(56, 41, 18, 0.12);
   background: rgba(255, 255, 255, 0.92);
+}
+
+.field textarea {
+  min-height: 104px;
+  resize: vertical;
+  font: inherit;
 }
 
 .filter-grid {
@@ -450,6 +457,15 @@ a {
 
 .demo-account-list {
   margin-top: 22px;
+}
+
+.auth-secondary-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
 }
 
 .demo-chip,
